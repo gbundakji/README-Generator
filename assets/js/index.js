@@ -4,8 +4,7 @@ const fs = require('fs');
 const generateMarkdown = require('./generateMarkdown.js')
 // const { table } = require('console');
 // TODO: Create an array of questions for user input
-const questions = () => {
-    return inquirer.prompt([
+const questions = [
         {
             type: 'input',
             name: 'title',
@@ -85,7 +84,7 @@ const questions = () => {
             }
         },
         {
-            type: 'checkbox',
+            type: 'list',
             name: 'license',
             message: 'Choose which type of license you would like to use',
             choices: ['Apache', 'Boost', 'GNU', 'IBM', 'ISC', 'MIT', 'MPL'],
@@ -112,9 +111,10 @@ const questions = () => {
             }
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'questions',
-            message: '',
+            message: 'Would you like to provide your GitHub account and e-mail address?',
+            choices: ['Yes', 'No'],
             confirm: questions => {
                 if (questions) {
                     return true;
@@ -151,12 +151,11 @@ const questions = () => {
                 }
             }
         },
-    ]);
-};
+];
 
 // TODO: Create a function to write README file
 function writeToFile(fileName, data) {
-    fs.writeToFile(fileName, data, (err) => {
+    fs.writeFile(fileName, data, (err) => {
         if (err) {
             return console.error(err);
         }
@@ -167,7 +166,7 @@ function writeToFile(fileName, data) {
 // TODO: Create a function to initialize app
 function init() {
     inquirer.prompt(questions)
-    .then(function (answers) {
+    .then(function (answers, data) {
         console.log(answers)
         writeToFile("README.md", generateMarkdown(answers));
     });
